@@ -47,11 +47,6 @@ fun promptForNumberOfGames(): Int {
 
 data class Player(val name: String, val color: Char, var score: Int = 0)
 
-fun nextPlayer(currentPlayer: Player, firstPlayer: Player, secondPlayer: Player): Player = when (currentPlayer) {
-    firstPlayer -> secondPlayer
-    else -> firstPlayer
-}
-
 fun printBoard(rows: Int, cols: Int, board: List<List<Char>>) {
     println(" " + (1..cols).joinToString(" ") + " ")
     for (row in rows - 1 downTo 0) {
@@ -139,6 +134,7 @@ fun main() {
         else -> println("Total $numGames games")
     }
     var currentPlayer = firstPlayer
+    var nextPlayer = secondPlayer
     repeat(numGames) { game ->
         if (numGames > 1) {
             println("Game #${game + 1}")
@@ -167,11 +163,10 @@ fun main() {
                 board[col - 1].add(currentPlayer.color)
             }
             printBoard(rows, cols, board)
-            val previousPlayer = currentPlayer
-            currentPlayer = nextPlayer(currentPlayer, firstPlayer, secondPlayer)
-            if (checkBoardForWinningCondition(board, rows, cols, previousPlayer.color)) {
-                println("Player ${previousPlayer.name} won")
-                previousPlayer.score += 2
+            currentPlayer = nextPlayer.also { nextPlayer = currentPlayer  }
+            if (checkBoardForWinningCondition(board, rows, cols, nextPlayer.color)) {
+                println("Player ${nextPlayer.name} won")
+                nextPlayer.score += 2
                 printScore(firstPlayer, secondPlayer)
                 break
             }
